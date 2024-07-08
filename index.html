@@ -9,14 +9,14 @@
     <table>
       <thead>
         <tr>
-          <th>client</th>
+          <th>Client</th>
           <th>Period</th>
           <th>Total Call Charge</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Client Name</td>  <!-- Replace this with the actual client name -->
+          <td>{{ client_name }}</td>  <!-- Display the client name -->
           <td>{{ data[0]['Dial starts at'][:10] }} - {{ data[0]['Dial ends at'][:10] }}</td>  <!-- Display the period -->
           <td>{{ total_call_charge }}</td>  <!-- Display the total call charge -->
         </tr>
