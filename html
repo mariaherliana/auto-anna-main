@@ -1,0 +1,26 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSV Processing Dashboard</title>
+  </head>
+  <body>
+    <h1>CSV Processing Results</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>client</th>
+          <th>Period</th>
+          <th>Total Call Charge</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Client Name</td>  <!-- Replace this with the actual client name -->
+          <td>{{ data[0]['Dial starts at'][:10] }} - {{ data[0]['Dial ends at'][:10] }}</td>  <!-- Display the period -->
+          <td>{{ total_call_charge }}</td>  <!-- Display the total call charge -->
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
