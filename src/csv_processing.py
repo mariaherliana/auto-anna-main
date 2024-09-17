@@ -40,16 +40,25 @@ def process_dashboard_csv(
 def process_console_csv(
     file_path: str, call_details: dict[str, CallDetail]
 ) -> dict[str, CallDetail]:
-    print(f"- Reading console file {file_path}...")
     df2 = pd.read_csv(file_path, low_memory=False).astype(str)
     for index, row in df2.iterrows():
         if row['call_type'] in ["OUTGOING_CALL", "OUTGOING_CALL_ABSENCE"]:
             continue
-            # Normalize phone numbers before processing
-            normalized_call_from = parse_phone_number(row["used_number"])
-            normalized_call_to = parse_phone_number(row["number"])
+        # Normalize phone numbers before processing
+        normalized_call_from = parse_phone_number(row["used_number"])
+        normalized_call_to = parse_phone_number(row["number"])
+
+        # Check if the call is already in the call_details dictionary
+        for key, call_detail in call_details.items():
+            if (
+                parse_phone_number(call_detail.call_from) == normalized_call_from and
+                parse_phone_number(call_detail.call_to) == normalized_call_to and
+                call_detail.dial_start_at == parse_jakarta_datetime(row["dial_starts_at"], row["pbx_region"])
+            ):
+                # If the call is already in the dictionary, skip it
+                break
         else:
-            # If no match is found, add the call with its original type
+            # If the call is not in the dictionary, add it with the same call type as it comes from
             call_detail = CallDetail(
                 user_name="",
                 call_from=row["used_number"],
@@ -65,7 +74,6 @@ def process_console_csv(
             )
             key = call_detail.hash_key()
             if key not in call_details:
-                print(f"Adding new call detail with call type: {call_detail.call_type}")
                 call_details[key] = call_detail
     return call_details
 
