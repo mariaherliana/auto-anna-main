@@ -37,7 +37,7 @@ class CallDetail:
         number_type = classify_number(self.call_to, self.call_type)
         if self.call_type in ["Internal Call", "Internal Call (No answer)"]:
             return "0"
-        elif self.call_type not in ["OUTGOING_CALL", "Outbound call", "PREDICTIVE_DIAL"]: # Delete this part for those need inbound calculation
+        elif self.call_type not in ["OUTGOING_CALL", "Outbound call", "PREDICTIVE_DIAL", "Automatic_transfer"]: # Delete this part for those need inbound calculation
             return "0" # or some other default value
         else:
             if number_type in ["Premium Call", "Toll-Free", "Split Charge"] or number_type in EMERGENCY_NUMBERS.values():
