@@ -26,12 +26,49 @@ def convert_to_jakarta_time_iso(original_date_str: str, region: str) -> datetime
     return jakarta_date
 
 
+import phonenumbers
+
+def parse_phone_number(phone_number: int | str) -> int | str:
+    # If the phone number is an integer, return it directly
+    if isinstance(phone_number, int):
+        return phone_number
+
+    # If phone_number is "scancall", return as it is
+    if phone_number == "scancall":
+        return "scancall"
+
+    # Clean the number by removing +, hyphens, parentheses, and spaces
+    cleaned_number = phone_number.replace("+", "").replace("-", "").replace("(", "").replace(")", "").replace(" ", "")
+
+    # Debug: Print the cleaned phone number
+    print(f"Cleaned phone number: {cleaned_number}")
+
+    # Remove country code 62 if present
+    if cleaned_number.startswith("62"):
+        cleaned_number = cleaned_number[2:]
+
+    # Debug: Print the normalized phone number after removing country code
+    print(f"Normalized phone number: {cleaned_number}")
+
+    # Try to convert to an integer
+    try:
+        return int(cleaned_number)
+    except ValueError:
+        return cleaned_number
+
+
 def classify_number(phone_number: int, call_type: str) -> str:
     phone_number_str = str(phone_number)
-    if call_type == "Internal Call":
+    if call_type in ["Internal Call", "EXTENSION"]:
         return "Internal Call"
     if call_type == "Internal Call (No answer)":
         return "Internal Call (No answer)"
+    if call_type == "AUTOMATIC_RECORD":
+        return "Voicemail"
+    if call_type == "AUTOMATIC_TRANSFER":
+        return "Automatic Transfer"
+    if call_type == "Monitoring":
+        return "Monitoring"
 
 
     if len(phone_number_str) == 5:
@@ -98,19 +135,6 @@ def parse_jakarta_datetime(datetime_str: str, region: str) -> str:
         return "-"
     jakarta_iso_date = convert_to_jakarta_time_iso(datetime_str, region)
     return format_datetime_as_iso(jakarta_iso_date)
-
-
-import phonenumbers
-
-def parse_phone_number(phone_number: str) -> int | str:
-    if phone_number == "scancall":
-        return "scancall"
-    try:
-        cleaned_number = phone_number.replace("-", "")
-        return int(float(cleaned_number))
-    except:
-        # print(f"Warning: {phone_number} is not a valid phone number.")
-        return 0
 
 
 def parse_time_duration(time_duration_string: str) -> timedelta:
