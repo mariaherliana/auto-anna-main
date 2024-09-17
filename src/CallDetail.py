@@ -1,7 +1,7 @@
 from src.utils import parse_phone_number, parse_iso_datetime, parse_time_duration, parse_call_memo, classify_number
 from src.idn_area_codes import EMERGENCY_NUMBERS
 import math
-from src.utils import call_hash, classify_number, format_datetime_as_human_readable, format_timedelta, format_username, parse_call_memo, parse_iso_datetime
+from src.utils import call_hash, classify_number, format_datetime_as_human_readable, format_timedelta, format_username, parse_call_memo, parse_iso_datetime, parse_phone_number
 
 class CallDetail:
     def __init__(
@@ -19,12 +19,12 @@ class CallDetail:
         call_charge: str,
     ):
         self.user_name = user_name
-        self.call_from = parse_phone_number(call_from)
-        self.call_to = parse_phone_number(call_to)
+        self.call_from = parse_phone_number(call_from)  # Normalizing here
+        self.call_to = parse_phone_number(call_to)      # Normalizing here
         self.call_type = call_type
         self.dial_start_at = parse_iso_datetime(dial_start_at)
         self.dial_answered_at = (
-            parse_iso_datetime(dial_answered_at) if dial_answered_at!= "-" else None
+            parse_iso_datetime(dial_answered_at) if dial_answered_at != "-" else None
         )
         self.dial_end_at = parse_iso_datetime(dial_end_at)
         self.ringing_time = parse_time_duration(ringing_time)
@@ -34,48 +34,48 @@ class CallDetail:
         self.number_type = classify_number(self.call_to, self.call_type)
 
     def calculate_call_charge(self) -> str:
-    	number_type = classify_number(self.call_to, self.call_type)
-    	if self.call_type in ["Internal Call", "Internal Call (No answer)"]:
-    		return "0"
-    	elif self.call_type not in ["OUTGOING_CALL", "Outbound call", "PREDICTIVE_DIAL"]: # Delete this part for those need inbound calculation
-    		return "0" # or some other default value
-    	else:
+        number_type = classify_number(self.call_to, self.call_type)
+        if self.call_type in ["Internal Call", "Internal Call (No answer)"]:
+            return "0"
+        elif self.call_type not in ["OUTGOING_CALL", "Outbound call", "PREDICTIVE_DIAL"]: # Delete this part for those need inbound calculation
+            return "0" # or some other default value
+        else:
             if number_type in ["Premium Call", "Toll-Free", "Split Charge"] or number_type in EMERGENCY_NUMBERS.values():
                 duration_in_minutes = self.call_duration.total_seconds() / 60
                 rounded_duration = math.ceil(duration_in_minutes)
                 call_charge = rounded_duration * 1700
             elif number_type in {"International - USA", "International - SGP", "International - THAI", "International - JPN", "International - GER", "International - NZL"}:
-            	duration_in_minutes = self.call_duration.total_seconds() / 60
-            	rounded_duration = math.ceil(duration_in_minutes)
-            	call_charge = rounded_duration * 1250
+                duration_in_minutes = self.call_duration.total_seconds() / 60
+                rounded_duration = math.ceil(duration_in_minutes)
+                call_charge = rounded_duration * 1250
             elif number_type in {"International - MY", "International - SK"}:
-            	duration_in_minutes = self.call_duration.total_seconds() / 60
-            	rounded_duration = math.ceil(duration_in_minutes)
-            	call_charge = rounded_duration * 1750
+                duration_in_minutes = self.call_duration.total_seconds() / 60
+                rounded_duration = math.ceil(duration_in_minutes)
+                call_charge = rounded_duration * 1750
             elif number_type in {"International - LAO", "International - CRI"}:
-            	duration_in_minutes = self.call_duration.total_seconds() / 60
-            	rounded_duration = math.ceil(duration_in_minutes)
-            	call_charge = rounded_duration * 2500
+                duration_in_minutes = self.call_duration.total_seconds() / 60
+                rounded_duration = math.ceil(duration_in_minutes)
+                call_charge = rounded_duration * 2500
             elif number_type in {"International - IND", "International - UK", "International - MXC"}:
-            	duration_in_minutes = self.call_duration.total_seconds() / 60
-            	rounded_duration = math.ceil(duration_in_minutes)
-            	call_charge = rounded_duration * 3000
+                duration_in_minutes = self.call_duration.total_seconds() / 60
+                rounded_duration = math.ceil(duration_in_minutes)
+                call_charge = rounded_duration * 3000
             elif number_type in {"International - AUS", "International - BRZ"}:
-            	duration_in_minutes = self.call_duration.total_seconds() / 60
-            	rounded_duration = math.ceil(duration_in_minutes)
-            	call_charge = rounded_duration * 3500
+                duration_in_minutes = self.call_duration.total_seconds() / 60
+                rounded_duration = math.ceil(duration_in_minutes)
+                call_charge = rounded_duration * 3500
             elif number_type in {"International - PHP", "International - UAE"}:
-            	duration_in_minutes = self.call_duration.total_seconds() / 60
-            	rounded_duration = math.ceil(duration_in_minutes)
-            	call_charge = rounded_duration * 4000
+                duration_in_minutes = self.call_duration.total_seconds() / 60
+                rounded_duration = math.ceil(duration_in_minutes)
+                call_charge = rounded_duration * 4000
             elif number_type == "International - DOM":
-            	duration_in_minutes = self.call_duration.total_seconds() / 60
-            	rounded_duration = math.ceil(duration_in_minutes)
-            	call_charge = rounded_duration * 5000
+                duration_in_minutes = self.call_duration.total_seconds() / 60
+                rounded_duration = math.ceil(duration_in_minutes)
+                call_charge = rounded_duration * 5000
             elif number_type in {"International - MMR", "International - CAM"}:
-            	duration_in_minutes = self.call_duration.total_seconds() / 60
-            	rounded_duration = math.ceil(duration_in_minutes)
-            	call_charge = rounded_duration * 6500
+                duration_in_minutes = self.call_duration.total_seconds() / 60
+                rounded_duration = math.ceil(duration_in_minutes)
+                call_charge = rounded_duration * 6500
             else:
                 duration_in_minutes = self.call_duration.total_seconds() / 60
                 rounded_duration = math.ceil(duration_in_minutes)
