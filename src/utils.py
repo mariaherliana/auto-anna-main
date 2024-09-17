@@ -40,15 +40,9 @@ def parse_phone_number(phone_number: int | str) -> int | str:
     # Clean the number by removing +, hyphens, parentheses, and spaces
     cleaned_number = phone_number.replace("+", "").replace("-", "").replace("(", "").replace(")", "").replace(" ", "")
 
-    # Debug: Print the cleaned phone number
-    print(f"Cleaned phone number: {cleaned_number}")
-
     # Remove country code 62 if present
     if cleaned_number.startswith("62"):
         cleaned_number = cleaned_number[2:]
-
-    # Debug: Print the normalized phone number after removing country code
-    print(f"Normalized phone number: {cleaned_number}")
 
     # Try to convert to an integer
     try:
